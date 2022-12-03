@@ -101,9 +101,7 @@ fn calculate_games_result(plays: &[(PlayOption, PlayOption)]) -> u32 {
     })
 }
 
-fn part2() {
-    let input = include_str!("./input.txt");
-
+fn part2(input: &str) -> u32 {
     let plays: Vec<(PlayOption, PlayOption)> = input
         .lines()
         .map(|s| {
@@ -119,13 +117,10 @@ fn part2() {
         })
         .collect();
 
-    let points = calculate_games_result(plays.as_slice());
-    println!("Part 2 {}", points);
+    calculate_games_result(plays.as_slice())
 }
 
-fn part1() {
-    let input = include_str!("./input.txt");
-
+fn part1(input: &str) -> u32 {
     let plays: Vec<(PlayOption, PlayOption)> = input
         .lines()
         .map(|s| {
@@ -133,12 +128,30 @@ fn part1() {
             (FromStr::from_str(a).unwrap(), FromStr::from_str(b).unwrap())
         })
         .collect();
-
-    let points = calculate_games_result(plays.as_slice());
-    println!("Points {}", points);
+    calculate_games_result(plays.as_slice())
 }
 
 fn main() {
-    part1();
-    part2();
+    let input = include_str!("../inputs/day2.txt");
+    let p1 = part1(input);
+    let p2 = part2(input);
+
+    println!("Result part 1: {}", p1);
+    println!("Result part 2: {}", p2);
+}
+
+#[cfg(test)]
+mod day2_tests {
+    use super::*;
+    const INPUT: &str = r#"A Y
+B X
+C Z"#;
+    #[test]
+    fn part1_ok() {
+        assert_eq!(part1(INPUT), 15);
+    }
+    #[test]
+    fn part2_ok() {
+        assert_eq!(part2(INPUT), 12)
+    }
 }

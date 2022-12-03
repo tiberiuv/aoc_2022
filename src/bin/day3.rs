@@ -1,8 +1,12 @@
 use std::collections::HashSet;
 
 fn main() {
-    part1();
-    part2();
+    let input = include_str!("../inputs/day3.txt");
+    let p1 = part1(input);
+    let p2 = part2(input);
+
+    println!("Result part 1: {}", p1);
+    println!("Result part 2: {}", p2);
 }
 
 fn priority(c: char) -> u32 {
@@ -13,8 +17,8 @@ fn priority(c: char) -> u32 {
     }
 }
 
-fn part1() {
-    let part1: u32 = include_str!("./input.txt")
+fn part1(input: &str) -> u32 {
+    input
         .lines()
         .map(|ruck| ruck.split_at(ruck.len() / 2))
         .map(|(a, b)| {
@@ -25,13 +29,11 @@ fn part1() {
         })
         .map(|(a, b)| a.intersection(&b).next().cloned().unwrap())
         .map(priority)
-        .sum();
-
-    println!("Result part 1: {}", part1);
+        .sum()
 }
 
-fn part2() {
-    let part2: u32 = include_str!("./input.txt")
+fn part2(input: &str) -> u32 {
+    input
         .lines()
         .collect::<Vec<&str>>()
         .chunks_exact(3)
@@ -51,6 +53,26 @@ fn part2() {
                 .unwrap()
         })
         .map(priority)
-        .sum();
-    println!("Result part 2: {}", part2);
+        .sum()
+}
+
+#[cfg(test)]
+mod day3_tests {
+    use super::*;
+    const INPUT: &str = r#"vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw"#;
+
+    #[test]
+    fn part1_ok() {
+        assert_eq!(part1(INPUT), 157);
+    }
+
+    #[test]
+    fn part2_ok() {
+        assert_eq!(part2(INPUT), 70);
+    }
 }
