@@ -10,9 +10,9 @@ fn main() {
     println!("Result part 2: {:?}", p2);
 }
 
-fn parse_paths(input: &str) -> HashMap<PathBuf, usize> {
+fn parse_dirs(input: &str) -> HashMap<PathBuf, usize> {
     let mut current_path = PathBuf::from("/");
-    let mut paths: HashMap<PathBuf, usize> = HashMap::new();
+    let mut dirs: HashMap<PathBuf, usize> = HashMap::new();
 
     for line in input.lines() {
         if let Some(line) = line.strip_prefix("$ ") {
@@ -26,26 +26,22 @@ fn parse_paths(input: &str) -> HashMap<PathBuf, usize> {
                 }
             }
         } else if !line.starts_with("dir ") {
-            let (size, _) = line
+            let size = line
                 .split_once(' ')
-                .map(|(size, file)| (size.parse::<usize>().unwrap(), file))
+                .map(|(size, _)| size.parse::<usize>().unwrap())
                 .unwrap();
 
             for ancestor in current_path.ancestors() {
-                paths
-                    .entry(ancestor.to_path_buf())
-                    .and_modify(|s| *s += size)
-                    .or_insert_with(|| size);
+                *dirs.entry(ancestor.to_path_buf()).or_insert(size) += size
             }
         }
     }
-    paths
+    dirs
 }
 
 fn part1(input: &str) -> usize {
-    let paths = parse_paths(input);
-    paths
-        .values()
+    let dirs = parse_dirs(input);
+    dirs.values()
         .cloned()
         .filter(|size| size <= &100_000usize)
         .sum()
@@ -54,15 +50,14 @@ fn part1(input: &str) -> usize {
 fn part2(input: &str) -> usize {
     const REQUIRED_SIZE: usize = 30_000_000usize;
     const MAX_SIZE: usize = 70_000_000usize;
-    let paths = parse_paths(input);
+    let dirs = parse_dirs(input);
 
-    let root_size = paths.get(Path::new("/")).unwrap();
+    let root_size = dirs.get(Path::new("/")).unwrap();
     let required_to_free = REQUIRED_SIZE - (MAX_SIZE - root_size);
 
-    paths
+    *dirs
         .values()
-        .cloned()
-        .filter(|&size| size >= required_to_free)
+        .filter(|&size| size >= &required_to_free)
         .min()
         .unwrap()
 }
